@@ -12,7 +12,7 @@ on:
 
 jobs:
   docker:
-    runs-on: [ubuntu-latest, ARM64]
+    runs-on: [ubuntu-arm-16-cores]
     steps:
       -
         name: Set up Docker Buildx
