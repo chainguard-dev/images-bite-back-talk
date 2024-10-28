@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Load cross-platform helper functions
 FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
 
@@ -12,7 +13,6 @@ COPY go.mod /work/
 COPY cmd /work/cmd
 COPY internal /work/internal
 
-# See https://mt165.co.uk/blog/static-link-go/ for creating static binaries
 #RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -o hello ./cmd/server
 RUN CGO_ENABLED=0 xx-go build -o hello ./cmd/server
 
