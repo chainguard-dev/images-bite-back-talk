@@ -5,7 +5,7 @@
 # https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-docker-images
 # https://github.com/marketplace/actions/build-and-push-docker-images
 
-name: ci
+name: Multiplatform Build with Runners
 
 on:
   push:
