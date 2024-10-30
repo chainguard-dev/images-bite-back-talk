@@ -66,7 +66,7 @@ jobs:
         run: |
           docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
             amouat/images-bite-back:x86-runner-${{ github.RUN_ID }} \
-            amouat/images-bite-back:arm-runner-${{ github_RUN_ID }}
+            amouat/images-bite-back:arm-runner-${{ github.RUN_ID }}
           docker manifest push amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }}
 
 #name: Publish Docker image
