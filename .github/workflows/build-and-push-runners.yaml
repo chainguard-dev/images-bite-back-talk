@@ -29,7 +29,7 @@ jobs:
         with:
           platforms: linux/arm64
           push: true
-          tags: amouat/images-bite-back:arm-runner-${GITHUB_RUN_ID}
+          tags: amouat/images-bite-back:arm-runner-${{ github.RUN_ID}
 
   x86build:
     runs-on: [ubuntu-latest-16-cores]
@@ -49,7 +49,7 @@ jobs:
         with:
           platforms: linux/x86_64
           push: true
-          tags: amouat/images-bite-back:x86-runner-${GITHUB_RUN_ID}
+          tags: amouat/images-bite-back:x86-runner-${{ github.RUN_ID }}
 
   manifest:
     needs: [x86build, armbuild]
@@ -64,10 +64,10 @@ jobs:
       -
         name: Create and Push Multi-Platform Manifest
         run: |
-          docker manifest create amouat/images-bite-back:multiplatorm-${{ GITHUB_RUN_ID }} \
-            amouat/images-bite-back:x86-runner-${{ GITHUB_RUN_ID }} \
-            amouat/images-bite-back:arm-runner-${{ GITHUB_RUN_ID }}
-          docker manifest push amouat/images-bite-back:multiplatorm-${{ GITHUB_RUN_ID }}
+          docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
+            amouat/images-bite-back:x86-runner-${{ github.RUN_ID }} \
+            amouat/images-bite-back:arm-runner-${{ github_RUN_ID }}
+          docker manifest push amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }}
 
 #name: Publish Docker image
 #
