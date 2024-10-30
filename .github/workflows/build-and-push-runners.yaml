@@ -15,11 +15,6 @@ jobs:
     runs-on: [ubuntu-arm-16-cores]
     steps:
       -
-        name: debug
-        run: |
-          whoami
-          which docker
-      -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       -
@@ -69,10 +64,10 @@ jobs:
       -
         name: Create and Push Multi-Platform Manifest
         run: |
-          docker manifest create amouat/images-bite-back:multiplatorm-${GITHUB_RUN_ID} \
-            amouat/images-bite-back:x86-runner-${GITHUB_RUN_ID} \
-            amouat/images-bite-back:arm-runner-${GITHUB_RUN_ID}
-          docker manifest push amouat/images-bite-back:multiplatorm-${GITHUB_RUN_ID}
+          docker manifest create amouat/images-bite-back:multiplatorm-${{ GITHUB_RUN_ID }} \
+            amouat/images-bite-back:x86-runner-${{ GITHUB_RUN_ID }} \
+            amouat/images-bite-back:arm-runner-${{ GITHUB_RUN_ID }}
+          docker manifest push amouat/images-bite-back:multiplatorm-${{ GITHUB_RUN_ID }}
 
 #name: Publish Docker image
 #
