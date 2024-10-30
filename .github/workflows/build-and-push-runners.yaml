@@ -16,7 +16,7 @@ jobs:
     steps:
       -
         name: debug
-        runs: |
+        run: |
           whoami
           which docker
       -
