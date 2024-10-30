@@ -29,7 +29,7 @@ jobs:
         with:
           platforms: linux/arm64
           push: true
-          tags: amouat/images-bite-back:arm-runner-${{ github.RUN_ID}
+          tags: amouat/images-bite-back:arm-runner-${{ github.RUN_ID }}
 
   x86build:
     runs-on: [ubuntu-latest-16-cores]
