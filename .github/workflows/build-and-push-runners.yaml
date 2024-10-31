@@ -72,8 +72,8 @@ jobs:
         run: |
 
           docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
-            amouat/images-bite-back:@${{ needs.x86build.outputs.digest }} \
-            amouat/images-bite-back:@${{ needs.armbuild.outputs.digest }}
+            amouat/images-bite-back@${{ needs.x86build.outputs.digest }} \
+            amouat/images-bite-back@${{ needs.armbuild.outputs.digest }}
           docker manifest push amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }}
 
           #          docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
