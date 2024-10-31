@@ -67,13 +67,17 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - 
+        name: Install crane
+        uses: imjasonh/setup-crane@v0.4
       -
         name: Create and Push Multi-Platform Manifest
         run: |
-
+          X86DIGEST=${ crane digest --platform linux/amd64 amouat/images-bite-back@${{ needs.x86build.outputs.digest }} }
+          ARMDIGEST=${ crane digest --platform linux/arm64 amouat/images-bite-back@${{ needs.armbuild.outputs.digest }} }
           docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
-            amouat/images-bite-back@${{ needs.x86build.outputs.digest }} \
-            amouat/images-bite-back@${{ needs.armbuild.outputs.digest }}
+            amouat/images-bite-back@$X86DIGEST \
+            amouat/images-bite-back@$ARMDIGEST
           docker manifest push amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }}
 
           #          docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
