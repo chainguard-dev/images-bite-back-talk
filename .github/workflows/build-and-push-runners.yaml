@@ -64,10 +64,16 @@ jobs:
       -
         name: Create and Push Multi-Platform Manifest
         run: |
+
           docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
-            amouat/images-bite-back:x86-runner-${{ github.RUN_ID }} \
-            amouat/images-bite-back:arm-runner-${{ github.RUN_ID }}
+            amouat/images-bite-back:@${{ steps.x86build.outputs.digest }} \
+            amouat/images-bite-back:@${{ steps.armbuild.outputs.digest }}
           docker manifest push amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }}
+
+          #          docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
+          #  amouat/images-bite-back:x86-runner-${{ github.RUN_ID }} \
+          #  amouat/images-bite-back:arm-runner-${{ github.RUN_ID }}
+          # docker manifest push amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }}
 
 #name: Publish Docker image
 #
