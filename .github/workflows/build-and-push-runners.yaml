@@ -73,8 +73,8 @@ jobs:
       -
         name: Create and Push Multi-Platform Manifest
         run: |
-          X86DIGEST=${ crane digest --platform linux/amd64 amouat/images-bite-back@${{ needs.x86build.outputs.digest }} }
-          ARMDIGEST=${ crane digest --platform linux/arm64 amouat/images-bite-back@${{ needs.armbuild.outputs.digest }} }
+          X86DIGEST=$(crane digest --platform linux/amd64 amouat/images-bite-back@${{ needs.x86build.outputs.digest }})
+          ARMDIGEST=$(crane digest --platform linux/arm64 amouat/images-bite-back@${{ needs.armbuild.outputs.digest }})
           docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
             amouat/images-bite-back@$X86DIGEST \
             amouat/images-bite-back@$ARMDIGEST
