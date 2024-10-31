@@ -13,6 +13,8 @@ on:
 jobs:
   armbuild:
     runs-on: [linux-arm-for-testing]
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
     steps:
       -
         name: Set up Docker Buildx
@@ -24,6 +26,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        id: build
         name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -33,6 +36,8 @@ jobs:
 
   x86build:
     runs-on: [ubuntu-latest-16-cores]
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
     steps:
       -
         name: Set up Docker Buildx
@@ -44,6 +49,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        id: build
         name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -66,8 +72,8 @@ jobs:
         run: |
 
           docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
-            amouat/images-bite-back:@${{ steps.x86build.outputs.digest }} \
-            amouat/images-bite-back:@${{ steps.armbuild.outputs.digest }}
+            amouat/images-bite-back:@${{ needs.x86build.outputs.digest }} \
+            amouat/images-bite-back:@${{ needs.armbuild.outputs.digest }}
           docker manifest push amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }}
 
           #          docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
