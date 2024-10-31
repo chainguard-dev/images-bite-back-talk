@@ -36,7 +36,6 @@ jobs:
             amouat/images-bite-back
       -
         name: Build and push
-        id: build
         uses: docker/build-push-action@v6
         with:
           file: Dockerfile
@@ -44,11 +43,11 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      -
-        name: Attest
-        uses: actions/attest-build-provenance@v1
-        id: attest
-        with:
-          subject-name: index.docker.io/images-bite-back
-          subject-digest: ${{ steps.build.outputs.digest }}
-          push-to-registry: true
+#      -
+#        name: Attest
+#        uses: actions/attest-build-provenance@v1
+#        id: attest
+#        with:
+#          subject-name: index.docker.io/images-bite-back
+#          subject-digest: ${{ steps.build.outputs.digest }}
+#          push-to-registry: true
