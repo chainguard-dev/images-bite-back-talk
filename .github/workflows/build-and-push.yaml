@@ -12,7 +12,7 @@ on:
 
 jobs:
   docker:
-    permissions: # needed for signing and attestations
+    #    permissions: # needed for signing and attestations
     #      id-token: write
     #  attestations: write
 
