@@ -13,8 +13,8 @@ on:
 jobs:
   docker:
     permissions: # needed for signing and attestations
-      id-token: write
-      attestations: write
+    #      id-token: write
+    #  attestations: write
 
     runs-on: ubuntu-latest
 
