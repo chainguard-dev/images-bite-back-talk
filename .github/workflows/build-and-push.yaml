@@ -36,8 +36,8 @@ jobs:
         with:
           images: |
             amouat/images-bite-back
-          labels: 
-            "org.opencontainers.image.description": "Images Bite Back Demo"
+          labels: |
+            org.opencontainers.image.description=Images Bite Back Demo
       -
         name: Build and push
         id: build
