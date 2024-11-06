@@ -12,8 +12,8 @@ on:
 
 jobs:
   docker:
-#    permissions: # needed for signing and attestations
-#      id-token: write
+    permissions: # needed for signing and attestations
+      id-token: read
 #      attestations: write
 
     runs-on: ubuntu-latest
