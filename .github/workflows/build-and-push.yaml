@@ -55,6 +55,6 @@ jobs:
         uses: actions/attest-build-provenance@v1
         id: attest
         with:
-          subject-name: index.docker.io/images-bite-back
+          subject-name: index.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/images-bite-back
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
