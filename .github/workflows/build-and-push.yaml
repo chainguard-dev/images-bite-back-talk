@@ -2,8 +2,7 @@
 # TODO SHAs and updating them
 # TODO check metadata action
 # 
-# https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-docker-images
-# https://github.com/marketplace/actions/build-and-push-docker-images
+# TODO pull reg name out of secret so it prints
 
 name: Simple Build
 
