@@ -12,8 +12,8 @@ on:
 
 jobs:
   docker:
-    permissions: # needed for signing and attestations
-      id-token: write # write seems weird, but it is correct per docs
+#    permissions: # needed for signing and attestations
+#     id-token: write # write seems weird, but it is correct per docs
 #      attestations: write
 
     runs-on: ubuntu-latest
@@ -47,6 +47,8 @@ jobs:
         name: Attest
         uses: actions/attest-build-provenance@v1
         id: attest
+        permissions: # needed for signing and attestations
+          id-token: write # write seems weird, but it is correct per docs
         with:
           subject-name: index.docker.io/images-bite-back
           subject-digest: ${{ steps.build.outputs.digest }}
