@@ -131,8 +131,8 @@ jobs:
           echo "X86DIGEST=$X86DIGEST" >> $GITHUB_ENV
           echo "ARMDIGEST=$ARMDIGEST" >> $GITHUB_ENV
           docker manifest create amouat/images-bite-back-runner:multi-${{ github.RUN_ID }} \
-            amouat/images-bite-back@$X86DIGEST \
-            amouat/images-bite-back@$ARMDIGEST
+            amouat/images-bite-back-runner@$X86DIGEST \
+            amouat/images-bite-back-runner@$ARMDIGEST
           docker manifest push amouat/images-bite-back-runner:multi-${{ github.RUN_ID }}
       - 
         name: Sign the images with GitHub OIDC Token
