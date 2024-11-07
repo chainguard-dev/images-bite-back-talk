@@ -124,7 +124,7 @@ jobs:
         name: Install crane
         uses: imjasonh/setup-crane@v0.4
       -
-        name: Create and Push Multi-Platform Manifest
+        name: Create, Push and Sign Multi-Platform Manifest
         run: |
           X86DIGEST=$(crane digest --platform linux/amd64 amouat/images-bite-back-runner@${{ needs.x86build.outputs.digest }})
           ARMDIGEST=$(crane digest --platform linux/arm64 amouat/images-bite-back-runner@${{ needs.armbuild.outputs.digest }})
@@ -133,9 +133,6 @@ jobs:
           docker manifest create amouat/images-bite-back-runner:multi-${{ github.RUN_ID }} \
             amouat/images-bite-back-runner@$X86DIGEST \
             amouat/images-bite-back-runner@$ARMDIGEST
-          docker manifest push amouat/images-bite-back-runner:multi-${{ github.RUN_ID }}
-      - 
-        name: Sign the images with GitHub OIDC Token
-        run: |
-          cosign sign -r --yes amouat/images-bite-back-runner:multi-${{ github.RUN_ID }}
+          MULTIDIGEST=$(docker manifest push amouat/images-bite-back-runner:multi-${{ github.RUN_ID }})
+          cosign sign -r --yes amouat/images-bite-back-runner@$MULTIDIGEST
 
