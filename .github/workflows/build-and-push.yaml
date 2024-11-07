@@ -25,21 +25,21 @@ jobs:
         with:
           username: ${{ vars.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
+      - 
+        name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5
         with:
           images: |
-            amouat/images-bite-back
+            amouat/images-bite-back-simple
           labels: |
-            org.opencontainers.image.description=Images Bite Back Demo
+            org.opencontainers.image.description=Images Bite Back Demo Simple Build
       -
         name: Build and push
         id: build
         uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75 # v6
         with:
-          #file: Dockerfile
+          file: Dockerfile
           platforms: linux/amd64
           push: true
           sbom: true
@@ -51,7 +51,7 @@ jobs:
         uses: actions/attest-build-provenance@92c65d2898f1f53cfdc910b962cecff86e7f8fcc # v1
         id: attest
         with:
-          subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back
+          subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back-simple
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
       - 
