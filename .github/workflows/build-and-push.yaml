@@ -1,5 +1,3 @@
-# TODO pull reg name out of secret so it prints
-
 name: Simple Build
 
 on:
@@ -25,7 +23,7 @@ jobs:
         name: Login to Docker Hub
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ vars.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
@@ -53,7 +51,7 @@ jobs:
         uses: actions/attest-build-provenance@92c65d2898f1f53cfdc910b962cecff86e7f8fcc # v1
         id: attest
         with:
-          subject-name: index.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/images-bite-back
+          subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
       - 
