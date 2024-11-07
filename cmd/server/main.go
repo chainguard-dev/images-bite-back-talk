@@ -1,7 +1,7 @@
 package main
 
 import (
-    "images-bite-back-talk/internal/app"
+    "images-bite-back/internal/app"
 )
 
 func main() {
