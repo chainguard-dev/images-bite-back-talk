@@ -5,6 +5,11 @@ on:
 
 jobs:
   docker:
+    permissions: # needed for signing and attestations
+     id-token: write # write seems weird, but it is correct per docs
+     attestations: write
+     contents: read
+
     runs-on: ubuntu-latest
     steps:
       - 
