@@ -35,7 +35,7 @@ jobs:
           tags: amouat/images-bite-back:arm-runner-${{ github.RUN_ID }}
 
   x86build:
-    runs-on: [ubuntu-latest-16-cores]
+    runs-on: [ubuntu-latest-2-cores-testing]
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     steps:
