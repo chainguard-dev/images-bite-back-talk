@@ -1,7 +1,7 @@
 package main
 
 import (
-    "LearningLabsStatic/internal/app"
+    "images-bite-back-talk/internal/app"
 )
 
 func main() {
