@@ -7,9 +7,8 @@ jobs:
   armbuild:
     runs-on: [linux-arm-for-testing]
     permissions: 
-      id-token: write
       attestations: write
-      content: read
+      contents: read
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     steps:
@@ -28,7 +27,9 @@ jobs:
         uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5
         with:
           images: |
-            amouat/images-bite-back-arm-runner-${{ github.RUN_ID }}
+            amouat/images-bite-back-runner
+          tags: |
+            type=raw,arm-${{ github.RUN_ID }}
           labels: |
             org.opencontainers.image.description=Images Bite Back Demo Arm Runner
       -
@@ -48,29 +49,17 @@ jobs:
         uses: actions/attest-build-provenance@92c65d2898f1f53cfdc910b962cecff86e7f8fcc # v1
         id: attest
         with:
-          subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back-arm-runner-${{ github.RUN_ID }}
+          subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back-runner
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
-      - 
-        name: Sign the images with GitHub OIDC Token
-        env:
-          DIGEST: ${{ steps.build.outputs.digest }}
-          TAGS: ${{ steps.meta.outputs.tags }}
-        run: |
-          images=""
-          for tag in ${TAGS}; do
-            images+="${tag}@${DIGEST} "
-          done
-          cosign sign --yes ${images}
 
   x86build:
     runs-on: [ubuntu-latest-2-cores-testing]
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     permissions: 
-      id-token: write 
       attestations: write
-      content:read
+      contents: read
     steps:
       -
         name: Set up Docker Buildx
@@ -87,9 +76,11 @@ jobs:
         uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5
         with:
           images: |
-            amouat/images-bite-back-x86-runner-${{ github.RUN_ID }}
+            amouat/images-bite-back-runner
+          tags: |
+            type=raw,x86-${{ github.RUN_ID }}
           labels: |
-            org.opencontainers.image.description=Images Bite Back Demo Arm Runner
+            org.opencontainers.image.description=Images Bite Back Demo X86 Runner
       -
         id: build
         name: Build and push
@@ -107,28 +98,20 @@ jobs:
         uses: actions/attest-build-provenance@92c65d2898f1f53cfdc910b962cecff86e7f8fcc # v1
         id: attest
         with:
-          subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back-x86-runner-${{ github.RUN_ID }}
+          subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back-runner
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
-      - 
-        name: Sign the images with GitHub OIDC Token
-        env:
-          DIGEST: ${{ steps.build.outputs.digest }}
-          TAGS: ${{ steps.meta.outputs.tags }}
-        run: |
-          images=""
-          for tag in ${TAGS}; do
-            images+="${tag}@${DIGEST} "
-          done
-          cosign sign --yes ${images}
 
   manifest:
-    permissions: # needed for signing and attestations
-     id-token: write # write seems weird, but it is correct per docs
+    permissions: 
+     id-token: write 
      attestations: write
     needs: [x86build, armbuild]
     runs-on: ubuntu-latest
     steps:
+      - 
+        name: Install Cosign
+        uses: sigstore/cosign-installer@1aa8e0f2454b781fbf0fbf306a4c9533a0c57409 # v3.7.0
       -
         name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -141,9 +124,16 @@ jobs:
       -
         name: Create and Push Multi-Platform Manifest
         run: |
-          X86DIGEST=$(crane digest --platform linux/amd64 amouat/images-bite-back@${{ needs.x86build.outputs.digest }})
-          ARMDIGEST=$(crane digest --platform linux/arm64 amouat/images-bite-back@${{ needs.armbuild.outputs.digest }})
-          docker manifest create amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }} \
+          X86DIGEST=$(crane digest --platform linux/amd64 amouat/images-bite-back-runner@${{ needs.x86build.outputs.digest }})
+          ARMDIGEST=$(crane digest --platform linux/arm64 amouat/images-bite-back-runner@${{ needs.armbuild.outputs.digest }})
+          echo "X86DIGEST=$X86DIGEST" >> $GITHUB_ENV
+          echo "ARMDIGEST=$ARMDIGEST" >> $GITHUB_ENV
+          docker manifest create amouat/images-bite-back-runner:multi-${{ github.RUN_ID }} \
             amouat/images-bite-back@$X86DIGEST \
             amouat/images-bite-back@$ARMDIGEST
-          docker manifest push amouat/images-bite-back:multiplatorm-${{ github.RUN_ID }}
+          docker manifest push amouat/images-bite-back-runner:multi-${{ github.RUN_ID }}
+      - 
+        name: Sign the images with GitHub OIDC Token
+        run: |
+          cosign sign -r --yes amouat/images-bite-back-runner:multi-${{ github.RUN_ID }}
+
