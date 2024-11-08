@@ -128,8 +128,6 @@ jobs:
         run: |
           X86DIGEST=$(crane digest --platform linux/amd64 amouat/images-bite-back-runner@${{ needs.x86build.outputs.digest }})
           ARMDIGEST=$(crane digest --platform linux/arm64 amouat/images-bite-back-runner@${{ needs.armbuild.outputs.digest }})
-          echo "X86DIGEST=$X86DIGEST" >> $GITHUB_ENV
-          echo "ARMDIGEST=$ARMDIGEST" >> $GITHUB_ENV
           docker manifest create amouat/images-bite-back-runner:multi-${{ github.RUN_ID }} \
             amouat/images-bite-back-runner@$X86DIGEST \
             amouat/images-bite-back-runner@$ARMDIGEST
