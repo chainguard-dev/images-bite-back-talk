@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM cgr.dev/chainguard/go:latest-dev@sha256:88919362146ee54cea7aea132c256d2f0581aeeb0b1c2661337ecf99e9dc945b AS builder
+FROM cgr.dev/chainguard/go:latest-dev@sha256:0f0612dae300fe06ed8ac945c93b6b84e10e3f099d4d33dfca09cff0887e3a21 AS builder
 
 WORKDIR /work
 
@@ -9,7 +9,7 @@ COPY internal /work/internal
 
 RUN CGO_ENABLED=0 go build -o hello ./cmd/server
 
-FROM cgr.dev/chainguard/static:latest@sha256:7e1e8a0ed6ebd521f2acfb326a4ae61c2f9b91e5c209dcd0f0e4a5934418a5ec
+FROM cgr.dev/chainguard/static:latest@sha256:5497b01f36ef14a5198c0165e50ae6a0006d0c7457d4566f1110257e1c0812ed
 COPY --from=builder /work/hello /hello
 
 ENTRYPOINT ["/hello"]
