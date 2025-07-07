@@ -47,7 +47,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
       -
         name: Attest
-        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v1
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v1
         id: attest
         with:
           subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back-runner
@@ -97,7 +97,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
       -
         name: Attest
-        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v1
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v1
         id: attest
         with:
           subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back-runner
@@ -113,7 +113,7 @@ jobs:
     steps:
       - 
         name: Install Cosign
-        uses: sigstore/cosign-installer@fb28c2b6339dcd94da6e4cbcbc5e888961f6f8c3 # v3.9.0
+        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3.9.1
       -
         name: Login to Docker Hub
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
