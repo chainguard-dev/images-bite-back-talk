@@ -5,6 +5,7 @@ on:
 
 jobs:
   armbuild:
+    if: vars.ENABLE_ARM_BUILDS == 'true'
     runs-on: [linux-arm-for-testing]
     permissions:
       id-token: write
@@ -109,6 +110,7 @@ jobs:
           push-to-registry: true
 
   manifest:
+    if: always() && !cancelled() && needs.x86build.result == 'success' && (needs.armbuild.result == 'success' || needs.armbuild.result == 'skipped')
     permissions:
      id-token: write
      attestations: write
@@ -134,10 +136,20 @@ jobs:
         run: |
           IMAGE=ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
           X86DIGEST=$(crane digest --platform linux/amd64 ${IMAGE}@${{ needs.x86build.outputs.digest }})
-          ARMDIGEST=$(crane digest --platform linux/arm64 ${IMAGE}@${{ needs.armbuild.outputs.digest }})
-          docker manifest create ${IMAGE}:multi-${{ github.RUN_ID }} \
-            ${IMAGE}@$X86DIGEST \
-            ${IMAGE}@$ARMDIGEST
+
+          # Check if ARM build succeeded
+          if [ "${{ needs.armbuild.result }}" == "success" ]; then
+            echo "Creating multi-platform manifest with ARM support"
+            ARMDIGEST=$(crane digest --platform linux/arm64 ${IMAGE}@${{ needs.armbuild.outputs.digest }})
+            docker manifest create ${IMAGE}:multi-${{ github.RUN_ID }} \
+              ${IMAGE}@$X86DIGEST \
+              ${IMAGE}@$ARMDIGEST
+          else
+            echo "Creating x86-only manifest (ARM build was skipped)"
+            docker manifest create ${IMAGE}:multi-${{ github.RUN_ID }} \
+              ${IMAGE}@$X86DIGEST
+          fi
+
           MULTIDIGEST=$(docker manifest push ${IMAGE}:multi-${{ github.RUN_ID }})
           cosign sign -r --yes ${IMAGE}@$MULTIDIGEST
 
