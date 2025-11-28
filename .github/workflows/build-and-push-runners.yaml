@@ -1,12 +1,14 @@
 name: Multiplatform Build with Runners
 
+# This action isn't enabled by default as it requires an arm runner
+# If you have an arm runner, set it in "runs-on" on in the armbuild job
+
 on:
-  push:
+#  push:
   workflow_dispatch:
 
 jobs:
   armbuild:
-    if: vars.HAVE_ARM_RUNNER == 'true'
     runs-on: [linux-arm-for-testing]
     permissions:
       id-token: write
@@ -137,18 +139,10 @@ jobs:
           IMAGE=ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
           X86DIGEST=$(crane digest --platform linux/amd64 ${IMAGE}@${{ needs.x86build.outputs.digest }})
 
-          # Check if ARM build succeeded
-          if [ "${{ needs.armbuild.result }}" == "success" ]; then
-            echo "Creating multi-platform manifest with ARM support"
-            ARMDIGEST=$(crane digest --platform linux/arm64 ${IMAGE}@${{ needs.armbuild.outputs.digest }})
-            docker manifest create ${IMAGE}:multi-${{ github.RUN_ID }} \
-              ${IMAGE}@$X86DIGEST \
-              ${IMAGE}@$ARMDIGEST
-          else
-            echo "Creating x86-only manifest (ARM build was skipped)"
-            docker manifest create ${IMAGE}:multi-${{ github.RUN_ID }} \
-              ${IMAGE}@$X86DIGEST
-          fi
+          ARMDIGEST=$(crane digest --platform linux/arm64 ${IMAGE}@${{ needs.armbuild.outputs.digest }})
+          docker manifest create ${IMAGE}:multi-${{ github.RUN_ID }} \
+            ${IMAGE}@$X86DIGEST \
+            ${IMAGE}@$ARMDIGEST
 
           MULTIDIGEST=$(docker manifest push ${IMAGE}:multi-${{ github.RUN_ID }})
           cosign sign -r --yes ${IMAGE}@$MULTIDIGEST
