@@ -6,10 +6,11 @@ on:
 jobs:
   armbuild:
     runs-on: [linux-arm-for-testing]
-    permissions: 
+    permissions:
       id-token: write
       attestations: write
       contents: read
+      packages: write
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     steps:
@@ -17,18 +18,19 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
       -
-        name: Login to Docker Hub
+        name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
         with:
-          username: ${{ vars.DOCKERHUB_USER }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - 
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
         name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         with:
           images: |
-            amouat/images-bite-back-runner
+            ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
           tags: |
             type=raw,arm-${{ github.RUN_ID }}
           labels: |
@@ -50,7 +52,7 @@ jobs:
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v1
         id: attest
         with:
-          subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back-runner
+          subject-name: ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
 
@@ -58,27 +60,29 @@ jobs:
     runs-on: [ubuntu-latest-2-cores-testing]
     outputs:
       digest: ${{ steps.build.outputs.digest }}
-    permissions: 
+    permissions:
       id-token: write
       attestations: write
       contents: read
+      packages: write
     steps:
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
       -
-        name: Login to Docker Hub
+        name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
         with:
-          username: ${{ vars.DOCKERHUB_USER }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - 
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
         name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         with:
           images: |
-            amouat/images-bite-back-runner
+            ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
           tags: |
             type=raw,x86-${{ github.RUN_ID }}
           labels: |
@@ -100,37 +104,40 @@ jobs:
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v1
         id: attest
         with:
-          subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back-runner
+          subject-name: ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
 
   manifest:
-    permissions: 
-     id-token: write 
+    permissions:
+     id-token: write
      attestations: write
+     packages: write
     needs: [x86build, armbuild]
     runs-on: ubuntu-latest
     steps:
-      - 
+      -
         name: Install Cosign
         uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3.9.1
       -
-        name: Login to Docker Hub
+        name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
         with:
-          username: ${{ vars.DOCKERHUB_USER }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - 
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
         name: Install crane
         uses: imjasonh/setup-crane@31b88efe9de28ae0ffa220711af4b60be9435f6e # v0.4
       -
         name: Create, Push and Sign Multi-Platform Manifest
         run: |
-          X86DIGEST=$(crane digest --platform linux/amd64 amouat/images-bite-back-runner@${{ needs.x86build.outputs.digest }})
-          ARMDIGEST=$(crane digest --platform linux/arm64 amouat/images-bite-back-runner@${{ needs.armbuild.outputs.digest }})
-          docker manifest create amouat/images-bite-back-runner:multi-${{ github.RUN_ID }} \
-            amouat/images-bite-back-runner@$X86DIGEST \
-            amouat/images-bite-back-runner@$ARMDIGEST
-          MULTIDIGEST=$(docker manifest push amouat/images-bite-back-runner:multi-${{ github.RUN_ID }})
-          cosign sign -r --yes amouat/images-bite-back-runner@$MULTIDIGEST
+          IMAGE=ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
+          X86DIGEST=$(crane digest --platform linux/amd64 ${IMAGE}@${{ needs.x86build.outputs.digest }})
+          ARMDIGEST=$(crane digest --platform linux/arm64 ${IMAGE}@${{ needs.armbuild.outputs.digest }})
+          docker manifest create ${IMAGE}:multi-${{ github.RUN_ID }} \
+            ${IMAGE}@$X86DIGEST \
+            ${IMAGE}@$ARMDIGEST
+          MULTIDIGEST=$(docker manifest push ${IMAGE}:multi-${{ github.RUN_ID }})
+          cosign sign -r --yes ${IMAGE}@$MULTIDIGEST
 
