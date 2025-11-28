@@ -2,6 +2,7 @@ name: Multiplatform Build with QEMU
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
   docker:
