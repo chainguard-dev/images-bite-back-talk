@@ -2,6 +2,7 @@ name: Multiplatform Build with Runners
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
   armbuild:

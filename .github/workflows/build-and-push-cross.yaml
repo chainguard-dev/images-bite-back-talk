@@ -2,6 +2,7 @@ name: Multiplatform Build with Cross Compiling
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
   docker:

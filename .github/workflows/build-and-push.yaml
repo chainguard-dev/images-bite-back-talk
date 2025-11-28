@@ -2,6 +2,7 @@ name: Simple Build
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
   docker:
