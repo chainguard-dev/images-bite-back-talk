@@ -5,7 +5,7 @@ on:
 
 jobs:
   armbuild:
-    if: vars.ENABLE_ARM_BUILDS == 'true'
+    if: vars.HAVE_ARM_RUNNER == 'true'
     runs-on: [linux-arm-for-testing]
     permissions:
       id-token: write
@@ -110,7 +110,6 @@ jobs:
           push-to-registry: true
 
   manifest:
-    if: always() && !cancelled() && needs.x86build.result == 'success' && (needs.armbuild.result == 'success' || needs.armbuild.result == 'skipped')
     permissions:
      id-token: write
      attestations: write
