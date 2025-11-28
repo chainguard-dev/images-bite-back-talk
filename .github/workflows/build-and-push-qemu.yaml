@@ -9,6 +9,7 @@ jobs:
      id-token: write # write seems weird, but it is correct per docs
      attestations: write
      contents: read
+     packages: write
 
     runs-on: ubuntu-latest
 
@@ -23,18 +24,19 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
       -
-        name: Login to Docker Hub
+        name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
         with:
-          username: ${{ vars.DOCKERHUB_USER }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - 
         name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804
         with:
           images: |
-            amouat/images-bite-back-qemu
+            ghcr.io/${{ github.repository_owner }}/images-bite-back-qemu
           labels: |
             org.opencontainers.image.description=Images Bite Back Demo QEMU Build
       -
@@ -54,7 +56,7 @@ jobs:
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v1
         id: attest
         with:
-          subject-name: index.docker.io/${{ vars.DOCKERHUB_USER }}/images-bite-back-qemu
+          subject-name: ghcr.io/${{ github.repository_owner }}/images-bite-back-qemu
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
       - 
