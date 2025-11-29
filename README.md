@@ -1,6 +1,6 @@
-# Images Bite Back
+# Production Container Builds with Actions
 
-This repo contains the code for my Cloud Native Rejekts talk on Day 2 Build Issues.
+This repo contains example builds and actions for deliverying container images which address common production concerns.
 
 It is intended to demonstrate how to:
  - do a multistage build with a distroless Chainguard images
@@ -19,3 +19,5 @@ The repo contains the following:
    - variants for compiling multistage builds with [QEMU](./.github/workflows/build-and-push-qemu.yaml), [cross-compilation](./.github/workflows/build-and-push-cross.yaml) and [dedicated runners](./.github/workflows/build-and-push-runners.yaml)
 
 Both the Actions and Dockerfiles are intended to be a good starting point for creating your own.
+
+This repo was originally created for the Cloud Native Rejekts talk [Images Bite Back](https://www.youtube.com/watch?v=9c6HYM7YAe8).
