@@ -136,7 +136,7 @@ jobs:
       -
         name: Create, Push and Sign Multi-Platform Manifest
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }-runner
+          IMAGE=ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-runner
           X86DIGEST=$(crane digest --platform linux/amd64 ${IMAGE}@${{ needs.x86build.outputs.digest }})
 
           ARMDIGEST=$(crane digest --platform linux/arm64 ${IMAGE}@${{ needs.armbuild.outputs.digest }})
