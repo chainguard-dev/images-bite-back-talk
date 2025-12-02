@@ -34,11 +34,11 @@ jobs:
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         with:
           images: |
-            ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
+	    ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-runner
           tags: |
             type=raw,arm-${{ github.RUN_ID }}
           labels: |
-            org.opencontainers.image.description=Images Bite Back Demo Arm Runner
+            org.opencontainers.image.description=Demo Arm Runner
       -
         id: build
         name: Build and push
@@ -56,7 +56,7 @@ jobs:
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v1
         id: attest
         with:
-          subject-name: ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
+          subject-name: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-runner
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
 
@@ -86,11 +86,11 @@ jobs:
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         with:
           images: |
-            ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
+	    ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-runner
           tags: |
             type=raw,x86-${{ github.RUN_ID }}
           labels: |
-            org.opencontainers.image.description=Images Bite Back Demo X86 Runner
+            org.opencontainers.image.description=Demo X86 Runner
       -
         id: build
         name: Build and push
@@ -108,7 +108,7 @@ jobs:
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v1
         id: attest
         with:
-          subject-name: ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
+          subject-name: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-runner
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
 
@@ -136,7 +136,7 @@ jobs:
       -
         name: Create, Push and Sign Multi-Platform Manifest
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/images-bite-back-runner
+          IMAGE=ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }-runner
           X86DIGEST=$(crane digest --platform linux/amd64 ${IMAGE}@${{ needs.x86build.outputs.digest }})
 
           ARMDIGEST=$(crane digest --platform linux/arm64 ${IMAGE}@${{ needs.armbuild.outputs.digest }})
