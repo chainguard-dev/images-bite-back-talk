@@ -34,7 +34,7 @@ jobs:
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         with:
           images: |
-	    ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-simple
+            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-simple
           labels: |
             org.opencontainers.image.description=Demo Simple Build
       -
