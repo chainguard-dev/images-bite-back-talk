@@ -37,9 +37,9 @@ jobs:
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804
         with:
           images: |
-            ghcr.io/${{ github.repository_owner }}/images-bite-back-qemu
+	    ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-qemu
           labels: |
-            org.opencontainers.image.description=Images Bite Back Demo QEMU Build
+            org.opencontainers.image.description=Demo QEMU Build
       -
         name: Build and push
         id: build
@@ -57,7 +57,7 @@ jobs:
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v1
         id: attest
         with:
-          subject-name: ghcr.io/${{ github.repository_owner }}/images-bite-back-qemu
+          subject-name: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-qemu
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
       - 
