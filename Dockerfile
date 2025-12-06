@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM cgr.dev/chainguard/go:latest-dev@sha256:fa9ef129b35dacc10c80f063f927df0cbb6336d38ef2131fb925048a720346cf AS builder
+FROM cgr.dev/chainguard/go:latest-dev@sha256:b7d723ec0af894e092f9d9656fb94f294d15e3fc669e7bac146376d1360629f3 AS builder
 
 WORKDIR /work
 
